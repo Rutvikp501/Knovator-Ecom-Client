@@ -5,11 +5,12 @@ const OrderContext = createContext();
 
 export const OrderProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
-  const [email, setEmail] = useState(localStorage.getItem('userEmail') || '');
+  const [email, setEmail] = useState(localStorage.getItem('email') || '');
 
-  // When email state changes, fetch orders from backend API
   useEffect(() => {
     const fetchOrders = async () => {
+      console.log(email);
+      
       if (!email) {
         setOrders([]);
         return;
@@ -18,8 +19,8 @@ export const OrderProvider = ({ children }) => {
         const response = await orderService.getOrdersByEmail(email);
         setOrders(response.data.orders || []);
       } catch (error) {
-        setOrders([]);
         console.error('Failed to fetch orders:', error);
+        setOrders([]);
       }
     };
 
@@ -32,7 +33,6 @@ export const OrderProvider = ({ children }) => {
   };
 
   const addOrder = (order) => {
-    // When a new order is placed, optionally update orders state
     setOrders(prev => [order, ...prev]);
     if (order.user?.email) {
       saveEmail(order.user.email);

@@ -35,8 +35,8 @@ export const orderService = {
     const response = await api.post('/orders', orderData);
     return response.data;
   },
-getOrdersByEmail: async (email) => {
-  const response = await api.get(`/orders/user`, { params: { email } });
+  getOrdersByEmail: async (email) => {
+  const response = await api.get(`/orders/user/${email}`);
   return response.data;
 }
 

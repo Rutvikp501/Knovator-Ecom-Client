@@ -4,11 +4,11 @@ import ProductGrid from '../components/product/ProductGrid';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import ErrorMessage from '../components/ui/ErrorMessage';
 import { Search, SlidersHorizontal } from 'lucide-react';
-import { useOrders } from '../hooks/useOrders.JS';
+import { useOrders } from '../context/OrderContext.jsx';
 
 const ProductListingPage = () => {
   const { products, loading, error, refetch } = useProducts();
-  const { orders, loadingOrders, ordersError } = useOrders("rutvik72patil@gmail.com");
+  const { orders, loadingOrders, ordersError } = useOrders();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('default');
