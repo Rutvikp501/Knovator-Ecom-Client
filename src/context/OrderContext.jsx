@@ -5,11 +5,10 @@ const OrderContext = createContext();
 
 export const OrderProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
-  const [email, setEmail] = useState(localStorage.getItem('email') || '');
+  const [email, setEmail] = useState(localStorage.getItem('userEmail') || '');
 
   useEffect(() => {
     const fetchOrders = async () => {
-      console.log(email);
       
       if (!email) {
         setOrders([]);

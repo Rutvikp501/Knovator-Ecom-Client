@@ -85,13 +85,11 @@ const CheckoutForm = () => {
         })),
         totalAmount: getTotalPrice()
       };
-console.log(orderData);
-console.log(cart);
       const response = await orderService.placeOrder(orderData);
       
       showToast(response.message, 'success');
       clearCart();
-      setFormData({ firstName: '', lastName: '', address: '' });
+      setFormData({ firstName: '', lastName: '', address: '', email: '', phone: '' });
       
       setTimeout(() => {
         navigate('/');

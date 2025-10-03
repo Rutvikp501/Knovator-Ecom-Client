@@ -5,29 +5,66 @@ import OrderCard from '../components/orders/OrderCard.jsx';
 import { ShoppingBag, Search, Filter } from 'lucide-react';
 
 const OrdersPage = () => {
-  const { orders } = useOrders();
+  const localStoredEmail = typeof window !== "undefined" ? localStorage.getItem("userEmail") : null;
+  const [email, setEmail] = useState(localStoredEmail ?? "");
+  const [showPrompt, setShowPrompt] = useState(!localStoredEmail);
+  const [emailInput, setEmailInput] = useState("");
+
+  // Only fetch if email is set
+  const { orders } = useOrders(email);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
-  console.log(orders);
 
   const filteredOrders = useMemo(() => {
     let filtered = [...orders];
 
-    // Filter by search term (order ID, name)
+    // Only search by orderId and user name if present
     if (searchTerm) {
-      filtered = filtered.filter(order => 
+      filtered = filtered.filter(order =>
         order.orderId.toString().includes(searchTerm) ||
-        `${order.firstName} ${order.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+        ((order.user?.name || "").toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
-    // Filter by status
     if (filterStatus !== 'all') {
       filtered = filtered.filter(order => order.status === filterStatus);
     }
 
     return filtered;
   }, [orders, searchTerm, filterStatus]);
+
+  // Show "enter email" card if localStorage is empty
+  if (showPrompt) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
+          <h2 className="text-xl font-bold mb-3">Enter registered email</h2>
+          <form onSubmit={e => {
+            e.preventDefault();
+            localStorage.setItem("userEmail", emailInput.trim());
+            setEmail(emailInput.trim());
+            setShowPrompt(false);
+          }}>
+            <input
+              type="email"
+              required
+              placeholder="Enter your email"
+              value={emailInput}
+              onChange={e => setEmailInput(e.target.value)}
+              className="w-full px-3 py-2 mb-4 border border-gray-300 rounded"
+            />
+            <button
+              type="submit"
+              className="w-full py-2 bg-primary-600 text-white rounded hover:bg-primary-700"
+            >
+              Continue
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   if (orders.length === 0) {
     return (
@@ -53,7 +90,6 @@ const OrdersPage = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">My Orders</h1>
         <p className="text-gray-600">Track and manage your orders</p>
       </div>
-
       {/* Filters */}
       <div className="mb-6 space-y-4">
         {/* Search Bar */}
@@ -63,12 +99,11 @@ const OrdersPage = () => {
             type="text"
             placeholder="Search by order ID or name..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg 
-                     focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                       focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
           />
         </div>
-
         {/* Status Filter */}
         <div className="flex items-center space-x-3">
           <Filter className="w-5 h-5 text-gray-500" />
@@ -89,7 +124,6 @@ const OrdersPage = () => {
           </div>
         </div>
       </div>
-
       {/* Results Count */}
       <div className="mb-4">
         <p className="text-sm text-gray-600">
@@ -97,7 +131,6 @@ const OrdersPage = () => {
           {filteredOrders.length !== 1 ? 's' : ''}
         </p>
       </div>
-
       {/* Orders Grid */}
       {filteredOrders.length === 0 ? (
         <div className="text-center py-12">
@@ -105,7 +138,7 @@ const OrdersPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredOrders.map((order) => (
+          {filteredOrders.map(order => (
             <OrderCard key={order.orderId} order={order} />
           ))}
         </div>
