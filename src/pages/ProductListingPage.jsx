@@ -62,15 +62,12 @@ const ProductListingPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Our Products</h1>
         <p className="text-gray-600">Discover amazing products at great prices</p>
       </div>
 
-      {/* Filters and Search */}
       <div className="mb-6 space-y-4">
-        {/* Search Bar */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
@@ -83,7 +80,6 @@ const ProductListingPage = () => {
           />
         </div>
 
-        {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div className="flex items-center space-x-2 text-sm text-gray-600">
             <SlidersHorizontal className="w-4 h-4" />
@@ -91,7 +87,6 @@ const ProductListingPage = () => {
           </div>
 
           <div className="flex flex-wrap gap-3 w-full sm:w-auto">
-            {/* Category Filter */}
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
@@ -105,7 +100,6 @@ const ProductListingPage = () => {
               ))}
             </select>
 
-            {/* Sort Filter */}
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -121,7 +115,6 @@ const ProductListingPage = () => {
         </div>
       </div>
 
-      {/* Results Count */}
       <div className="mb-4">
         <p className="text-sm text-gray-600">
           Showing <span className="font-semibold">{filteredProducts.length}</span> product
@@ -129,7 +122,6 @@ const ProductListingPage = () => {
         </p>
       </div>
 
-      {/* Products Grid */}
       <ProductGrid products={filteredProducts} />
     </div>
   );
