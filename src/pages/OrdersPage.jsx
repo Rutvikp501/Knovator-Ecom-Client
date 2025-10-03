@@ -18,23 +18,19 @@ const OrdersPage = () => {
 
   const filteredOrders = useMemo(() => {
     let filtered = [...orders];
-
-    // Only search by orderId and user name if present
     if (searchTerm) {
       filtered = filtered.filter(order =>
         order.orderId.toString().includes(searchTerm) ||
         ((order.user?.name || "").toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
-
     if (filterStatus !== 'all') {
       filtered = filtered.filter(order => order.status === filterStatus);
     }
-
     return filtered;
   }, [orders, searchTerm, filterStatus]);
 
-  // Show "enter email" card if localStorage is empty
+  // Show "enter/change email" card
   if (showPrompt) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -45,6 +41,7 @@ const OrdersPage = () => {
             localStorage.setItem("userEmail", emailInput.trim());
             setEmail(emailInput.trim());
             setShowPrompt(false);
+            window.location.reload();
           }}>
             <input
               type="email"
@@ -60,6 +57,15 @@ const OrdersPage = () => {
             >
               Continue
             </button>
+            {localStoredEmail && (
+              <button
+                type="button"
+                onClick={() => setShowPrompt(false)}
+                className="w-full mt-2 py-2 border border-gray-400 rounded hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            )}
           </form>
         </div>
       </div>
@@ -85,10 +91,24 @@ const OrdersPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">My Orders</h1>
-        <p className="text-gray-600">Track and manage your orders</p>
+      {/* Header and Email Display */}
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">My Orders</h1>
+          <p className="text-gray-600 mb-1">Track and manage your orders</p>
+          <div className="text-sm text-primary-600 font-semibold flex items-center gap-2">
+            <span>Signed in as: {email}</span>
+            <button
+              className="ml-2 underline text-primary-600 hover:text-primary-800"
+              onClick={() => {
+                setShowPrompt(true);
+                setEmailInput("");
+              }}
+            >
+              Change Email
+            </button>
+          </div>
+        </div>
       </div>
       {/* Filters */}
       <div className="mb-6 space-y-4">
@@ -101,7 +121,7 @@ const OrdersPage = () => {
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg 
-                       focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                     focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
           />
         </div>
         {/* Status Filter */}
